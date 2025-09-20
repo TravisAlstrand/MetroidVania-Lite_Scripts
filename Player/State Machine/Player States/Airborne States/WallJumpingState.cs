@@ -30,6 +30,11 @@ public class WallJumpingState : PlayerBaseState
 
     if (_wallJumpTimer <= 0f)
     {
+      if (player.CanDash)
+      {
+        stateM.SwitchState(stateM._dashingState);
+      }
+
       if (player.IsGrounded)
       {
         if (player.FrameInput.Move.x != 0f)
@@ -53,6 +58,7 @@ public class WallJumpingState : PlayerBaseState
         else
         {
           stateM.SwitchState(stateM._fallingState);
+          return;
         }
       }
     }

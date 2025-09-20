@@ -8,12 +8,14 @@ public class PlayerInputManager : MonoBehaviour
   private PlayerInputActions _playerInputActions;
   private InputAction _move;
   private InputAction _jump;
+  private InputAction _dash;
 
   private void Awake()
   {
     _playerInputActions = new PlayerInputActions();
     _move = _playerInputActions.Player.Move;
     _jump = _playerInputActions.Player.Jump;
+    _dash = _playerInputActions.Player.Dash;
   }
 
   private void OnEnable()
@@ -37,7 +39,8 @@ public class PlayerInputManager : MonoBehaviour
     {
       Move = _move.ReadValue<Vector2>(),
       Jump = _jump.WasPressedThisFrame(),
-      JumpHeld = _jump.inProgress
+      JumpHeld = _jump.inProgress,
+      Dash = _dash.WasPressedThisFrame()
     };
   }
 }
@@ -47,4 +50,5 @@ public struct FrameInput
   public Vector2 Move;
   public bool Jump;
   public bool JumpHeld;
+  public bool Dash;
 }

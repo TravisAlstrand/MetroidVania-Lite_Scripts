@@ -9,6 +9,11 @@ public class MovingState : PlayerBaseState
 
   public override void UpdateState(PlayerStateMachine stateM, PlayerManager player)
   {
+    if (player.CanDash)
+    {
+      stateM.SwitchState(stateM._dashingState);
+    }
+
     if (player.IsGrounded)
     {
       if (player.CanPerformJump())

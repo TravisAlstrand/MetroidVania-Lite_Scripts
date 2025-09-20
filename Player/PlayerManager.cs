@@ -40,7 +40,6 @@ public class PlayerManager : MonoBehaviour
   private float _coyoteTimer;
   [HideInInspector] public float _lastJumpTime;
   private bool _jumpQueued = false;
-  private bool _hasDoubleJumped = false;
 
   [Header("Falling")]
   public float ExtraGravity = 25f;
@@ -57,11 +56,17 @@ public class PlayerManager : MonoBehaviour
   public float WallSlideSpeed;
 
   [Header("Dash")]
+  public float DashSpeed = 12f;
+  public float DashDuration = 1f;
+  [SerializeField] private float _dashCoolDown = 1f;
+  private float _dashCoolDownTimer;
+  private bool _shouldCountdownDashCoolDown = false;
 
   [Header("Abilities")]
   [SerializeField] private bool _wallAbilitiesUnlocked = false;
   [SerializeField] private bool _doubleJumpUnlocked = false;
   [SerializeField] private bool _dashUnlocked = false;
+  private bool _canDoubleJump = false;
 
   [Header("Components")]
   [HideInInspector] public Rigidbody2D Rigidbody;
@@ -71,7 +76,6 @@ public class PlayerManager : MonoBehaviour
 
   // GETTERS
   public bool IsFacingRight => _isFacingRight;
-  public bool IsOnWall => _isOnWall;
   public bool IsGrounded
   {
     get
@@ -85,7 +89,9 @@ public class PlayerManager : MonoBehaviour
       return _isGrounded;
     }
   }
+  public bool IsOnWall => _isOnWall;
   public bool WallAbilitiesUnlocked => _wallAbilitiesUnlocked;
+  public bool CanDash => DetermineIfCanDash();
 
   private void Awake()
   {
@@ -125,7 +131,7 @@ public class PlayerManager : MonoBehaviour
     else
     {
       _coyoteTimer = _coyoteTime;
-      _hasDoubleJumped = false;
+      _canDoubleJump = true;
     }
 
     // WALL COYOTE TIME (WHEN PUSHING OFF WALL AND ATTEMPTING WALL JUMP LATE)
@@ -136,6 +142,11 @@ public class PlayerManager : MonoBehaviour
     else
     {
       _wallCoyoteTimer = _wallCoyoteTime;
+    }
+
+    if (_shouldCountdownDashCoolDown)
+    {
+      _dashCoolDownTimer -= Time.deltaTime;
     }
   }
 
@@ -180,10 +191,10 @@ public class PlayerManager : MonoBehaviour
     }
 
     // DOUBLE JUMP
-    if (_doubleJumpUnlocked && !_hasDoubleJumped)
+    if (_doubleJumpUnlocked && _canDoubleJump)
     {
       _jumpQueued = false;
-      _hasDoubleJumped = true;
+      _canDoubleJump = false;
       return true;
     }
 
@@ -207,6 +218,26 @@ public class PlayerManager : MonoBehaviour
       return true;
     }
 
+    return false;
+  }
+  #endregion
+
+  #region Dashing
+  public void StartDashCoolDown()
+  {
+    _dashCoolDownTimer = _dashCoolDown;
+    _shouldCountdownDashCoolDown = true;
+  }
+
+  private bool DetermineIfCanDash()
+  {
+    if (!FrameInput.Dash) return false;
+
+    if (_dashUnlocked && _dashCoolDownTimer <= 0f && !_isOnWall)
+    {
+      _shouldCountdownDashCoolDown = false;
+      return true;
+    }
     return false;
   }
   #endregion

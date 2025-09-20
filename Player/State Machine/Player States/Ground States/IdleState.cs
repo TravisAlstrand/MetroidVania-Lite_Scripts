@@ -16,6 +16,12 @@ public class IdleState : PlayerBaseState
       return;
     }
 
+    if (player.CanDash)
+    {
+      stateM.SwitchState(stateM._dashingState);
+      return;
+    }
+
     if (player.IsGrounded)
     {
       if (player.FrameInput.Move.x != 0f)

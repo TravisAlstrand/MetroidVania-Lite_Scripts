@@ -15,6 +15,9 @@ public class PlayerStateMachine : MonoBehaviour
   public FallingState _fallingState = new();
   public WallJumpingState _wallJumpingState = new();
 
+  // OTHER STATES
+  public DashingState _dashingState = new();
+
   // CURRENT STATE
   public PlayerBaseState CurrentState { get; private set; }
 

@@ -1,16 +1,67 @@
 using UnityEngine;
 
-public class DashingState : MonoBehaviour
+public class DashingState : PlayerBaseState
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+  // TODO: ADD ANIMATION NAME VARIABLE
+  private float _dashDurationTimer;
+  private float _dashDirection;
 
-    // Update is called once per frame
-    void Update()
+  public override void EnterState(PlayerStateMachine stateM, PlayerManager player)
+  {
+    // TODO: PLAY ANIMATION
+    _dashDurationTimer = player.DashDuration;
+
+    _dashDirection = player.IsFacingRight ? 1f : -1f;
+
+    player.Rigidbody.linearVelocity = new Vector2(
+      _dashDirection * player.DashSpeed,
+      0f
+    );
+  }
+
+  public override void UpdateState(PlayerStateMachine stateM, PlayerManager player)
+  {
+    _dashDurationTimer -= Time.deltaTime;
+
+    if (_dashDurationTimer <= 0f)
     {
-        
+      if (player.IsGrounded)
+      {
+        if (player.FrameInput.Move.x != 0f)
+        {
+          stateM.SwitchState(stateM._movingState);
+          return;
+        }
+        else
+        {
+          stateM.SwitchState(stateM._idleState);
+          return;
+        }
+      }
+
+      if (player.IsOnWall && player.WallAbilitiesUnlocked && !player.IsGrounded)
+      {
+        stateM.SwitchState(stateM._wallSlidingState);
+        return;
+      }
+
+      stateM.SwitchState(stateM._fallingState);
     }
+  }
+
+  public override void FixedUpdateState(PlayerStateMachine stateM, PlayerManager player)
+  {
+    if (_dashDurationTimer > 0f)
+    {
+      player.Rigidbody.linearVelocity = new Vector2(
+        _dashDirection * player.DashSpeed,
+        0f
+      );
+    }
+  }
+
+  public override void ExitState(PlayerStateMachine stateM, PlayerManager player)
+  {
+    player.StartDashCoolDown();
+  }
 }

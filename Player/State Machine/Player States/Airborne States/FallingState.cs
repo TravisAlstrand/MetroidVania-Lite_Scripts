@@ -17,6 +17,11 @@ public class FallingState : PlayerBaseState
       return;
     }
 
+    if (player.CanDash)
+    {
+      stateM.SwitchState(stateM._dashingState);
+    }
+
     if (player.CanPerformJump() || player.CanPerformWallJump())
     {
       stateM.SwitchState(stateM._jumpingState);

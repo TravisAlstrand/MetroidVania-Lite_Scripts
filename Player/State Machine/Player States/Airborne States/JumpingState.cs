@@ -41,6 +41,11 @@ public class JumpingState : PlayerBaseState
       return;
     }
 
+    if (player.CanDash)
+    {
+      stateM.SwitchState(stateM._dashingState);
+    }
+
     // WALL SLIDE
     if (player.IsOnWall && player.WallAbilitiesUnlocked)
     {
