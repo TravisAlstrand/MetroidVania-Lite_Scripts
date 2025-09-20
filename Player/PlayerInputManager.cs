@@ -9,6 +9,7 @@ public class PlayerInputManager : MonoBehaviour
   private InputAction _move;
   private InputAction _jump;
   private InputAction _dash;
+  private InputAction _shrink;
 
   private void Awake()
   {
@@ -16,6 +17,7 @@ public class PlayerInputManager : MonoBehaviour
     _move = _playerInputActions.Player.Move;
     _jump = _playerInputActions.Player.Jump;
     _dash = _playerInputActions.Player.Dash;
+    _shrink = _playerInputActions.Player.Shrink;
   }
 
   private void OnEnable()
@@ -40,7 +42,8 @@ public class PlayerInputManager : MonoBehaviour
       Move = _move.ReadValue<Vector2>(),
       Jump = _jump.WasPressedThisFrame(),
       JumpHeld = _jump.inProgress,
-      Dash = _dash.WasPressedThisFrame()
+      Dash = _dash.WasPressedThisFrame(),
+      ShrinkGrow = _shrink.WasPressedThisFrame()
     };
   }
 }
@@ -51,4 +54,5 @@ public struct FrameInput
   public bool Jump;
   public bool JumpHeld;
   public bool Dash;
+  public bool ShrinkGrow;
 }

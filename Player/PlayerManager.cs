@@ -62,11 +62,18 @@ public class PlayerManager : MonoBehaviour
   private float _dashCoolDownTimer;
   private bool _shouldCountdownDashCoolDown = false;
 
-  [Header("Abilities")]
+  [Header("Shrink/Grow")]
+  public float SmallMoveSpeed = 4.25f;
+  private bool _isSmall = false;
+
+  [Header("Ability Unlocks")]
   [SerializeField] private bool _wallAbilitiesUnlocked = false;
   [SerializeField] private bool _doubleJumpUnlocked = false;
   [SerializeField] private bool _dashUnlocked = false;
+  [SerializeField] private bool _shrinkUnlocked = false;
   private bool _canDoubleJump = false;
+  private bool _canShrink = false;
+  private bool _canGrow = false;
 
   [Header("Components")]
   [HideInInspector] public Rigidbody2D Rigidbody;
