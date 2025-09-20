@@ -36,7 +36,6 @@ public class PlayerManager : MonoBehaviour
   [SerializeField] private float _jumpBufferTime = 0.2f;
   [SerializeField] private float _jumpGroundIgnoreTime = 0.1f;
   public float IgnoreWallOnJumpTime = 0.2f;
-  [SerializeField] private bool _canDoubleJump;
   private float _jumpBufferTimer;
   private float _coyoteTimer;
   [HideInInspector] public float _lastJumpTime;
@@ -56,6 +55,13 @@ public class PlayerManager : MonoBehaviour
 
   [Header("Wall Slide")]
   public float WallSlideSpeed;
+
+  [Header("Dash")]
+
+  [Header("Abilities")]
+  [SerializeField] private bool _wallAbilitiesUnlocked = false;
+  [SerializeField] private bool _doubleJumpUnlocked = false;
+  [SerializeField] private bool _dashUnlocked = false;
 
   [Header("Components")]
   [HideInInspector] public Rigidbody2D Rigidbody;
@@ -79,6 +85,7 @@ public class PlayerManager : MonoBehaviour
       return _isGrounded;
     }
   }
+  public bool WallAbilitiesUnlocked => _wallAbilitiesUnlocked;
 
   private void Awake()
   {
@@ -172,7 +179,8 @@ public class PlayerManager : MonoBehaviour
       return true;
     }
 
-    if (_canDoubleJump && !_hasDoubleJumped)
+    // DOUBLE JUMP
+    if (_doubleJumpUnlocked && !_hasDoubleJumped)
     {
       _jumpQueued = false;
       _hasDoubleJumped = true;
@@ -181,9 +189,14 @@ public class PlayerManager : MonoBehaviour
 
     return false;
   }
+  #endregion
 
+  #region Wall Jumping
   public bool CanPerformWallJump()
   {
+    // MUST HAVE ABILITY UNLOCKED
+    if (!_wallAbilitiesUnlocked) return false;
+
     // MUST HAVE JUMP QUEUED
     if (!_jumpQueued) return false;
 

@@ -23,7 +23,7 @@ public class FallingState : PlayerBaseState
       return;
     }
 
-    if (player.IsOnWall && !player.IsGrounded)
+    if (player.IsOnWall && player.WallAbilitiesUnlocked && !player.IsGrounded)
     {
       stateM.SwitchState(stateM._wallSlidingState);
     }

@@ -42,7 +42,7 @@ public class JumpingState : PlayerBaseState
     }
 
     // WALL SLIDE
-    if (player.IsOnWall)
+    if (player.IsOnWall && player.WallAbilitiesUnlocked)
     {
       if (_startedJumpTouchingWall)
       {
