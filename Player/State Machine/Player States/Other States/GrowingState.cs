@@ -32,6 +32,11 @@ public class GrowingState : PlayerBaseState
     }
   }
 
+  public override void FixedUpdateState(PlayerStateMachine stateM, PlayerManager player)
+  {
+    player.Rigidbody.linearVelocityX = player.FrameInput.Move.x * player.MoveSpeed;
+  }
+
   public override void ExitState(PlayerStateMachine stateM, PlayerManager player)
   {
     player.SwitchBodyColliders();

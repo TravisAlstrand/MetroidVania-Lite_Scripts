@@ -34,4 +34,9 @@ public class ShrinkingState : PlayerBaseState
       }
     }
   }
+
+  public override void FixedUpdateState(PlayerStateMachine stateM, PlayerManager player)
+  {
+    player.Rigidbody.linearVelocityX = player.FrameInput.Move.x * player.MoveSpeed;
+  }
 }

@@ -67,7 +67,14 @@ public class PlayerManager : MonoBehaviour
 
   [Header("Shrink/Grow")]
   public float SmallMoveSpeed = 4.25f;
-  public bool IsSmall = false;
+  [SerializeField] private Transform _smallHeadHitRayPointLeft;
+  [SerializeField] private Transform _smallHeadHitRayPointRight;
+  [SerializeField] private float _smallHeadDetectionRayLength = 0.3f;
+  [SerializeField] private bool _showSmallHeadHitRays = false;
+  private RaycastHit2D _smallHeadHitInfoLeft;
+  private RaycastHit2D _smallHeadHitInfoRight;
+  private bool _isUnderLowCeiling = false;
+  [HideInInspector] public bool IsSmall = false;
 
   [Header("Ability Unlocks")]
   [SerializeField] private bool _wallAbilitiesUnlocked = false;
@@ -287,8 +294,7 @@ public class PlayerManager : MonoBehaviour
   {
     if (!FrameInput.ShrinkGrow || !IsSmall) return false;
 
-    // TODO: ADD HEAD CHECK THAT NOT UNDER SMALL CEILING
-    if (_shrinkUnlocked && _isGrounded)
+    if (_shrinkUnlocked && _isGrounded && !_isUnderLowCeiling)
     {
       return true;
     }
@@ -350,13 +356,31 @@ public class PlayerManager : MonoBehaviour
       _isOnWall = true;
     }
     else { _isOnWall = false; }
-    // Debug.Log(_isOnWall);
+  }
+
+  private void CheckIfUnderLowCeiling()
+  {
+    _smallHeadHitInfoLeft = Physics2D.Raycast(_smallHeadHitRayPointLeft.position, Vector2.up, _smallHeadDetectionRayLength, _groundLayer);
+    _smallHeadHitInfoRight = Physics2D.Raycast(_smallHeadHitRayPointRight.position, Vector2.up, _smallHeadDetectionRayLength, _groundLayer);
+
+    if (_showSmallHeadHitRays)
+    {
+      Debug.DrawRay(_smallHeadHitRayPointLeft.position, new Vector3(0f, _smallHeadDetectionRayLength, 0f), Color.red);
+      Debug.DrawRay(_smallHeadHitRayPointRight.position, new Vector3(0f, _smallHeadDetectionRayLength, 0f), Color.red);
+    }
+
+    if (_smallHeadHitInfoLeft || _smallHeadHitInfoRight)
+    {
+      _isUnderLowCeiling = true;
+    }
+    else { _isUnderLowCeiling = false; }
   }
 
   private void CollisionChecks()
   {
     CheckIfGrounded();
     CheckIfOnWall();
+    if (IsSmall) CheckIfUnderLowCeiling();
   }
   #endregion
 }
