@@ -3,11 +3,11 @@ using UnityEngine;
 public class WallSlidingState : PlayerBaseState
 {
   private readonly string _animationName = "OnWall";
-  private float _wallStickTimer = 0.1f;
+  private float _wallStickTimer = 0.125f;
 
   public override void EnterState(PlayerStateMachine stateM, PlayerManager player)
   {
-    player.FillSpriteRenderer.color = player.WallColor;
+    player.ChangeSpriteColor(player.WallColor);
     player.Animator.Play(_animationName);
   }
 

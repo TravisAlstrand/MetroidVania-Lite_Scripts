@@ -42,6 +42,7 @@ public class PlayerManager : MonoBehaviour
   private float _coyoteTimer;
   [HideInInspector] public float _lastJumpTime;
   private bool _jumpQueued = false;
+  private bool _canDoubleJump = false;
 
   [Header("Falling")]
   public float ExtraGravity = 25f;
@@ -75,20 +76,26 @@ public class PlayerManager : MonoBehaviour
   private bool _isUnderLowCeiling = false;
   [HideInInspector] public bool IsSmall = false;
 
+  [Header("Shield")]
+  public float ShieldEnabledTime = 1.5f;
+
   [Header("Ability Unlocks")]
   [SerializeField] private bool _wallAbilitiesUnlocked = false;
   [SerializeField] private bool _doubleJumpUnlocked = false;
   [SerializeField] private bool _dashUnlocked = false;
   [SerializeField] private bool _shrinkUnlocked = false;
-  private bool _canDoubleJump = false;
+  [SerializeField] private bool _shieldUnlocked = false;
 
   [Header("Ability Colors")]
-  public SpriteRenderer FillSpriteRenderer;
+  [SerializeField] private SpriteRenderer _fillSpriteRenderer;
   public Color WallColor;
   public Color DashColor;
   public Color ShrinkColor;
+  [HideInInspector] public Color WhiteColor = Color.white;
+  // ASSUMING I'LL NEED THIS FOR THE SHIELD ABILITY - REMOVE IF NOT
+  private Color _previousColor;
 
-  // COMPONENTS
+  #region Components
   [HideInInspector] public Rigidbody2D Rigidbody;
   [HideInInspector] public Animator Animator;
   private PlayerInputManager _playerInput;
@@ -96,8 +103,9 @@ public class PlayerManager : MonoBehaviour
   private Collider2D _tallBodyCollider;
   private Collider2D _smallBodyCollider;
   private PlayerStateMachine _stateM;
+  #endregion
 
-  // GETTERS
+  #region Getters
   public bool IsFacingRight => _isFacingRight;
   public bool IsGrounded
   {
@@ -117,6 +125,7 @@ public class PlayerManager : MonoBehaviour
   public bool CanDash => DetermineIfCanDash();
   public bool CanShrink => DetermineIfCanShrink();
   public bool CanGrow => DetermineIfCanGrow();
+  #endregion
 
   private void Awake()
   {
@@ -184,7 +193,7 @@ public class PlayerManager : MonoBehaviour
     }
   }
 
-  #region Sprite Flip
+  #region Sprite Manipulation
   private void FlipSprite()
   {
     if ((_isFacingRight && FrameInput.Move.x < 0f) ||
@@ -199,6 +208,13 @@ public class PlayerManager : MonoBehaviour
   {
     transform.Rotate(0f, 180f, 0f);
     _isFacingRight = !_isFacingRight;
+  }
+
+  public void ChangeSpriteColor(Color newColor)
+  {
+    _previousColor = _fillSpriteRenderer.color;
+    Debug.Log($"Prev Color: {_previousColor}");
+    _fillSpriteRenderer.color = newColor;
   }
   #endregion
 

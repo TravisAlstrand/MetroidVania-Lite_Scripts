@@ -8,11 +8,14 @@ public class ShrinkingState : PlayerBaseState
 
   public override void EnterState(PlayerStateMachine stateM, PlayerManager player)
   {
-    player.FillSpriteRenderer.color = player.ShrinkColor;
+    // CHANGE COLOR / PLAY ANIMATION
+    player.ChangeSpriteColor(player.ShrinkColor);
     player.Animator.Play(_animationName);
+    // GET ANIMATION LENGTH TO AUTO SWITCH STATES WHEN COMPLETED
     AnimationClip clip = player.GetClipByName(_animationName);
     _animationLength = clip.length;
     _stateTimer = _animationLength;
+
     player.SwitchBodyColliders();
     player.IsSmall = true;
   }
