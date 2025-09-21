@@ -30,8 +30,7 @@ public class PlayerManager : MonoBehaviour
 
   [Header("Movement")]
   public float MoveSpeed = 6f;
-  // MAY NEED TO CHANGE THIS DEFAULT VALUE EVENTUALLY
-  private bool _isFacingRight = true;
+  private bool _isFacingRight;
 
   [Header("Jumping")]
   public float JumpForce = 11.25f;
@@ -98,7 +97,6 @@ public class PlayerManager : MonoBehaviour
   private Collider2D _smallBodyCollider;
   private PlayerStateMachine _stateM;
 
-
   // GETTERS
   public bool IsFacingRight => _isFacingRight;
   public bool IsGrounded
@@ -128,6 +126,12 @@ public class PlayerManager : MonoBehaviour
     _tallBodyCollider = GetComponent<CapsuleCollider2D>();
     _smallBodyCollider = GetComponent<CircleCollider2D>();
     _stateM = GetComponent<PlayerStateMachine>();
+  }
+
+  private void Start()
+  {
+    _isFacingRight = transform.rotation.y == 0f;
+    Debug.Log(_isFacingRight);
   }
 
   private void Update()
