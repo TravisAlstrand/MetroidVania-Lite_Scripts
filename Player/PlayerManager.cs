@@ -76,6 +76,12 @@ public class PlayerManager : MonoBehaviour
   [SerializeField] private bool _shrinkUnlocked = false;
   private bool _canDoubleJump = false;
 
+  [Header("Ability Colors")]
+  public SpriteRenderer FillSpriteRenderer;
+  public Color WallColor;
+  public Color DashColor;
+  public Color ShrinkColor;
+
   // COMPONENTS
   [HideInInspector] public Rigidbody2D Rigidbody;
   [HideInInspector] public Animator Animator;

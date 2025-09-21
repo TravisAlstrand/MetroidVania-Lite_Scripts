@@ -7,6 +7,7 @@ public class WallSlidingState : PlayerBaseState
 
   public override void EnterState(PlayerStateMachine stateM, PlayerManager player)
   {
+    player.FillSpriteRenderer.color = player.WallColor;
     player.Animator.Play(_animationName);
   }
 

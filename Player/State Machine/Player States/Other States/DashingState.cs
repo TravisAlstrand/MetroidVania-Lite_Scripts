@@ -9,14 +9,10 @@ public class DashingState : PlayerBaseState
   public override void EnterState(PlayerStateMachine stateM, PlayerManager player)
   {
     // TODO: PLAY ANIMATION
+    player.FillSpriteRenderer.color = player.DashColor;
     _dashDurationTimer = player.DashDuration;
 
     _dashDirection = player.IsFacingRight ? 1f : -1f;
-
-    player.Rigidbody.linearVelocity = new Vector2(
-      _dashDirection * player.DashSpeed,
-      0f
-    );
   }
 
   public override void UpdateState(PlayerStateMachine stateM, PlayerManager player)
