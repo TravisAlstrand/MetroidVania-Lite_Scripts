@@ -3,6 +3,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerInputManager))]
+[RequireComponent(typeof(CapsuleCollider2D))]
+[RequireComponent(typeof(CircleCollider2D))]
+[RequireComponent(typeof(PlayerStateMachine))]
 public class PlayerManager : MonoBehaviour
 {
   [Header("Ground")]
@@ -64,7 +67,7 @@ public class PlayerManager : MonoBehaviour
 
   [Header("Shrink/Grow")]
   public float SmallMoveSpeed = 4.25f;
-  private bool _isSmall = false;
+  public bool IsSmall = false;
 
   [Header("Ability Unlocks")]
   [SerializeField] private bool _wallAbilitiesUnlocked = false;
@@ -72,14 +75,16 @@ public class PlayerManager : MonoBehaviour
   [SerializeField] private bool _dashUnlocked = false;
   [SerializeField] private bool _shrinkUnlocked = false;
   private bool _canDoubleJump = false;
-  private bool _canShrink = false;
-  private bool _canGrow = false;
 
-  [Header("Components")]
+  // COMPONENTS
   [HideInInspector] public Rigidbody2D Rigidbody;
   [HideInInspector] public Animator Animator;
   private PlayerInputManager _playerInput;
   [HideInInspector] public FrameInput FrameInput;
+  private Collider2D _tallBodyCollider;
+  private Collider2D _smallBodyCollider;
+  private PlayerStateMachine _stateM;
+
 
   // GETTERS
   public bool IsFacingRight => _isFacingRight;
@@ -99,12 +104,17 @@ public class PlayerManager : MonoBehaviour
   public bool IsOnWall => _isOnWall;
   public bool WallAbilitiesUnlocked => _wallAbilitiesUnlocked;
   public bool CanDash => DetermineIfCanDash();
+  public bool CanShrink => DetermineIfCanShrink();
+  public bool CanGrow => DetermineIfCanGrow();
 
   private void Awake()
   {
     Rigidbody = GetComponent<Rigidbody2D>();
     Animator = GetComponent<Animator>();
     _playerInput = GetComponent<PlayerInputManager>();
+    _tallBodyCollider = GetComponent<CapsuleCollider2D>();
+    _smallBodyCollider = GetComponent<CircleCollider2D>();
+    _stateM = GetComponent<PlayerStateMachine>();
   }
 
   private void Update()
@@ -188,7 +198,7 @@ public class PlayerManager : MonoBehaviour
   public bool CanPerformJump()
   {
     // BUFFER CHECK
-    if (!_jumpQueued || _jumpBufferTimer <= 0f) return false;
+    if (!_jumpQueued || _jumpBufferTimer <= 0f || IsSmall) return false;
 
     // PRIMARY JUMP (GROUNDED OR COYOTE)
     if (_coyoteTimer > 0f)
@@ -246,6 +256,50 @@ public class PlayerManager : MonoBehaviour
       return true;
     }
     return false;
+  }
+  #endregion
+
+  #region Shrinking / Growing
+  public void SwitchBodyColliders()
+  {
+    _tallBodyCollider.enabled = !_tallBodyCollider.enabled;
+    _smallBodyCollider.enabled = !_smallBodyCollider.enabled;
+  }
+
+  private bool DetermineIfCanShrink()
+  {
+    if (!FrameInput.ShrinkGrow || IsSmall) return false;
+
+    if (_shrinkUnlocked && _isGrounded && _stateM.CurrentState != _stateM._dashingState)
+    {
+      return true;
+    }
+    return false;
+  }
+
+  private bool DetermineIfCanGrow()
+  {
+    if (!FrameInput.ShrinkGrow || !IsSmall) return false;
+
+    // TODO: ADD HEAD CHECK THAT NOT UNDER SMALL CEILING
+    if (_shrinkUnlocked && _isGrounded)
+    {
+      return true;
+    }
+    return false;
+  }
+  #endregion
+
+  #region Helpers
+  public AnimationClip GetClipByName(string name)
+  {
+    AnimationClip[] clips = Animator.runtimeAnimatorController.animationClips;
+
+    foreach (AnimationClip clip in clips)
+    {
+      if (clip.name == name) return clip;
+    }
+    return null;
   }
   #endregion
 

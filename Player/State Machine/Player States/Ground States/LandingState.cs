@@ -10,7 +10,7 @@ public class LandingState : PlayerBaseState
   {
     player.Animator.Play(_animationName);
 
-    AnimationClip clip = GetClipByName(player.Animator, _animationName);
+    AnimationClip clip = player.GetClipByName(_animationName);
     _animationLength = clip.length;
     _stateTimer = _animationLength;
   }
@@ -34,16 +34,5 @@ public class LandingState : PlayerBaseState
   public override void FixedUpdateState(PlayerStateMachine stateM, PlayerManager player)
   {
     player.Rigidbody.linearVelocityX = player.FrameInput.Move.x * player.MoveSpeed;
-  }
-
-  private AnimationClip GetClipByName(Animator animator, string name)
-  {
-    AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
-
-    foreach (AnimationClip clip in clips)
-    {
-      if (clip.name == name) return clip;
-    }
-    return null;
   }
 }

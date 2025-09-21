@@ -38,13 +38,21 @@ public class DashingState : PlayerBaseState
           return;
         }
       }
-
-      if (player.IsOnWall && player.WallAbilitiesUnlocked && !player.IsGrounded)
+      else
       {
-        stateM.SwitchState(stateM._wallSlidingState);
+        stateM.SwitchState(stateM._fallingState);
         return;
       }
+    }
 
+    if (player.IsOnWall && player.WallAbilitiesUnlocked && !player.IsGrounded)
+    {
+      stateM.SwitchState(stateM._wallSlidingState);
+      return;
+    }
+
+    if (player.IsOnWall && !player.WallAbilitiesUnlocked && !player.IsGrounded)
+    {
       stateM.SwitchState(stateM._fallingState);
     }
   }

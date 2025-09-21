@@ -22,6 +22,12 @@ public class MovingState : PlayerBaseState
         return;
       }
 
+      if (player.CanShrink)
+      {
+        stateM.SwitchState(stateM._shrinkingState);
+        return;
+      }
+
       if (player.FrameInput.Move.x == 0f)
       {
         stateM.SwitchState(stateM._idleState);

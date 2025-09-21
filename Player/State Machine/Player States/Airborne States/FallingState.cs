@@ -13,8 +13,23 @@ public class FallingState : PlayerBaseState
   {
     if (player.IsGrounded)
     {
-      stateM.SwitchState(stateM._landingState);
-      return;
+      if (!player.IsSmall)
+      {
+        stateM.SwitchState(stateM._landingState);
+        return;
+      }
+      else
+      {
+        if (player.FrameInput.Move.x != 0f)
+        {
+          stateM.SwitchState(stateM._smallMovingState);
+          return;
+        }
+        else
+        {
+          stateM.SwitchState(stateM._smallMovingState);
+        }
+      }
     }
 
     if (player.CanDash)
