@@ -11,6 +11,29 @@ public class FallingState : PlayerBaseState
 
   public override void UpdateState(PlayerStateMachine stateM, PlayerManager player)
   {
+    if (player.CanDash)
+    {
+      stateM.SwitchState(stateM._dashingState);
+    }
+
+    if (player.CanShield)
+    {
+      stateM.SwitchState(stateM._shieldedState);
+      return;
+    }
+
+    if (player.CanJump || player.CanWallJump)
+    {
+      stateM.SwitchState(stateM._jumpingState);
+      return;
+    }
+
+    if (player.IsOnWall && player.WallAbilitiesUnlocked && !player.IsGrounded)
+    {
+      stateM.SwitchState(stateM._wallSlidingState);
+      return;
+    }
+
     if (player.IsGrounded)
     {
       if (!player.IsSmall)
@@ -30,22 +53,6 @@ public class FallingState : PlayerBaseState
           stateM.SwitchState(stateM._smallMovingState);
         }
       }
-    }
-
-    if (player.CanDash)
-    {
-      stateM.SwitchState(stateM._dashingState);
-    }
-
-    if (player.CanPerformJump() || player.CanPerformWallJump())
-    {
-      stateM.SwitchState(stateM._jumpingState);
-      return;
-    }
-
-    if (player.IsOnWall && player.WallAbilitiesUnlocked && !player.IsGrounded)
-    {
-      stateM.SwitchState(stateM._wallSlidingState);
     }
   }
 

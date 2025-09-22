@@ -10,7 +10,7 @@ public class IdleState : PlayerBaseState
 
   public override void UpdateState(PlayerStateMachine stateM, PlayerManager player)
   {
-    if (player.CanPerformJump())
+    if (player.CanJump)
     {
       stateM.SwitchState(stateM._jumpingState);
       return;
@@ -22,14 +22,20 @@ public class IdleState : PlayerBaseState
       return;
     }
 
+    if (player.CanShrink)
+    {
+      stateM.SwitchState(stateM._shrinkingState);
+      return;
+    }
+
+    if (player.CanShield)
+    {
+      stateM.SwitchState(stateM._shieldedState);
+      return;
+    }
+
     if (player.IsGrounded)
     {
-      if (player.CanShrink)
-      {
-        stateM.SwitchState(stateM._shrinkingState);
-        return;
-      }
-
       if (player.FrameInput.Move.x != 0f)
       {
         stateM.SwitchState(stateM._movingState);

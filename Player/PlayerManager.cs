@@ -77,7 +77,12 @@ public class PlayerManager : MonoBehaviour
   [HideInInspector] public bool IsSmall = false;
 
   [Header("Shield")]
-  public float ShieldEnabledTime = 1.5f;
+  public float ShieldDuration = 1.5f;
+  [SerializeField] private float _shieldCoolDown = 2f;
+  [SerializeField] private float _normalGravity;
+  [SerializeField] private float _shieldedGravity = 5f;
+  private float _shieldCoolDownTimer;
+  private bool _shouldCountdownShieldCoolDown = false;
 
   [Header("Ability Unlocks")]
   [SerializeField] private bool _wallAbilitiesUnlocked = false;
@@ -92,7 +97,6 @@ public class PlayerManager : MonoBehaviour
   public Color DashColor;
   public Color ShrinkColor;
   [HideInInspector] public Color WhiteColor = Color.white;
-  // ASSUMING I'LL NEED THIS FOR THE SHIELD ABILITY - REMOVE IF NOT
   private Color _previousColor;
 
   #region Components
@@ -122,9 +126,12 @@ public class PlayerManager : MonoBehaviour
   }
   public bool IsOnWall => _isOnWall;
   public bool WallAbilitiesUnlocked => _wallAbilitiesUnlocked;
+  public bool CanJump => DetermineIfCanJump();
+  public bool CanWallJump => DetermineIfCanWallJump();
   public bool CanDash => DetermineIfCanDash();
   public bool CanShrink => DetermineIfCanShrink();
   public bool CanGrow => DetermineIfCanGrow();
+  public bool CanShield => DetermineIfCanShield();
   #endregion
 
   private void Awake()
@@ -140,7 +147,7 @@ public class PlayerManager : MonoBehaviour
   private void Start()
   {
     _isFacingRight = transform.rotation.y == 0f;
-    Debug.Log(_isFacingRight);
+    _normalGravity = Rigidbody.gravityScale;
   }
 
   private void Update()
@@ -191,6 +198,11 @@ public class PlayerManager : MonoBehaviour
     {
       _dashCoolDownTimer -= Time.deltaTime;
     }
+
+    if (_shouldCountdownShieldCoolDown)
+    {
+      _shieldCoolDownTimer -= Time.deltaTime;
+    }
   }
 
   #region Sprite Manipulation
@@ -213,8 +225,12 @@ public class PlayerManager : MonoBehaviour
   public void ChangeSpriteColor(Color newColor)
   {
     _previousColor = _fillSpriteRenderer.color;
-    Debug.Log($"Prev Color: {_previousColor}");
     _fillSpriteRenderer.color = newColor;
+  }
+
+  public void ChangeToPreviousSpriteColor()
+  {
+    ChangeSpriteColor(_previousColor);
   }
   #endregion
 
@@ -228,7 +244,7 @@ public class PlayerManager : MonoBehaviour
     }
   }
 
-  public bool CanPerformJump()
+  public bool DetermineIfCanJump()
   {
     // BUFFER CHECK
     if (!_jumpQueued || _jumpBufferTimer <= 0f || IsSmall) return false;
@@ -253,7 +269,7 @@ public class PlayerManager : MonoBehaviour
   #endregion
 
   #region Wall Jumping
-  public bool CanPerformWallJump()
+  public bool DetermineIfCanWallJump()
   {
     // MUST HAVE ABILITY UNLOCKED
     if (!_wallAbilitiesUnlocked) return false;
@@ -303,7 +319,7 @@ public class PlayerManager : MonoBehaviour
   {
     if (!FrameInput.ShrinkGrow || IsSmall) return false;
 
-    if (_shrinkUnlocked && _isGrounded && _stateM.CurrentState != _stateM._dashingState)
+    if (_shrinkUnlocked && _isGrounded)
     {
       return true;
     }
@@ -316,6 +332,32 @@ public class PlayerManager : MonoBehaviour
 
     if (_shrinkUnlocked && _isGrounded && !_isUnderLowCeiling)
     {
+      return true;
+    }
+    return false;
+  }
+  #endregion
+
+  #region Shield
+  public void SwitchGravityValues()
+  {
+    float nextGravity = Rigidbody.gravityScale == _normalGravity ? _shieldedGravity : _normalGravity;
+    Rigidbody.gravityScale = nextGravity;
+  }
+
+  public void StartShieldCoolDown()
+  {
+    _shieldCoolDownTimer = _shieldCoolDown;
+    _shouldCountdownShieldCoolDown = true;
+  }
+
+  private bool DetermineIfCanShield()
+  {
+    if (!FrameInput.Shield) return false;
+
+    if (_shieldUnlocked && _shieldCoolDownTimer <= 0f)
+    {
+      _shouldCountdownShieldCoolDown = false;
       return true;
     }
     return false;

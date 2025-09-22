@@ -14,17 +14,23 @@ public class MovingState : PlayerBaseState
       stateM.SwitchState(stateM._dashingState);
     }
 
+    if (player.CanShrink)
+    {
+      stateM.SwitchState(stateM._shrinkingState);
+      return;
+    }
+
+    if (player.CanShield)
+    {
+      stateM.SwitchState(stateM._shieldedState);
+      return;
+    }
+
     if (player.IsGrounded)
     {
-      if (player.CanPerformJump())
+      if (player.CanJump)
       {
         stateM.SwitchState(stateM._jumpingState);
-        return;
-      }
-
-      if (player.CanShrink)
-      {
-        stateM.SwitchState(stateM._shrinkingState);
         return;
       }
 
@@ -36,7 +42,7 @@ public class MovingState : PlayerBaseState
     }
     else
     {
-      if (player.CanPerformJump())
+      if (player.CanJump)
       {
         stateM.SwitchState(stateM._jumpingState);
         return;

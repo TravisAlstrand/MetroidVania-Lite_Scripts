@@ -28,7 +28,7 @@ public class JumpingState : PlayerBaseState
     }
 
     // BUFFERED / DOUBLE JUMP
-    if (player.CanPerformJump())
+    if (player.CanJump)
     {
       stateM.SwitchState(stateM._jumpingState);
       return;
@@ -44,6 +44,13 @@ public class JumpingState : PlayerBaseState
     if (player.CanDash)
     {
       stateM.SwitchState(stateM._dashingState);
+      return;
+    }
+
+    if (player.CanShield)
+    {
+      stateM.SwitchState(stateM._shieldedState);
+      return;
     }
 
     // WALL SLIDE

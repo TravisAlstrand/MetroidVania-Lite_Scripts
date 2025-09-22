@@ -35,6 +35,12 @@ public class WallJumpingState : PlayerBaseState
         stateM.SwitchState(stateM._dashingState);
       }
 
+      if (player.CanShield)
+      {
+        stateM.SwitchState(stateM._shieldedState);
+        return;
+      }
+
       if (player.IsGrounded)
       {
         if (player.FrameInput.Move.x != 0f)

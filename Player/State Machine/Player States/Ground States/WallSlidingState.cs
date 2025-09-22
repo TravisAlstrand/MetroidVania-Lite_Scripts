@@ -15,7 +15,7 @@ public class WallSlidingState : PlayerBaseState
   {
     _wallStickTimer -= Time.deltaTime;
 
-    if (player.CanPerformWallJump())
+    if (player.CanWallJump)
     {
       stateM.SwitchState(stateM._wallJumpingState);
       return;
