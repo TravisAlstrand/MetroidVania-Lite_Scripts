@@ -24,7 +24,7 @@ public class SmallMovingState : PlayerBaseState
     }
     else
     {
-      stateM.SwitchState(stateM._fallingState);
+      stateM.SwitchState(stateM._smallFallingState);
     }
   }
 

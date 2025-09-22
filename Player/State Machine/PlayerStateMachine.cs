@@ -14,6 +14,7 @@ public class PlayerStateMachine : MonoBehaviour
   public JumpingState _jumpingState = new();
   public FallingState _fallingState = new();
   public WallJumpingState _wallJumpingState = new();
+  public SmallFallingState _smallFallingState = new();
 
   // SMALL STATES
   public ShrinkingState _shrinkingState = new();
