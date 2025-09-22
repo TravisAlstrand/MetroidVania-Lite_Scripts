@@ -11,6 +11,7 @@ public class PlayerInputManager : MonoBehaviour
   private InputAction _dash;
   private InputAction _shrink;
   private InputAction _shield;
+  private InputAction _fire;
 
   private void Awake()
   {
@@ -20,6 +21,7 @@ public class PlayerInputManager : MonoBehaviour
     _dash = _playerInputActions.Player.Dash;
     _shrink = _playerInputActions.Player.Shrink;
     _shield = _playerInputActions.Player.Shield;
+    _fire = _playerInputActions.Player.Fire;
   }
 
   private void OnEnable()
@@ -46,7 +48,8 @@ public class PlayerInputManager : MonoBehaviour
       JumpHeld = _jump.inProgress,
       Dash = _dash.WasPressedThisFrame(),
       ShrinkGrow = _shrink.WasPressedThisFrame(),
-      Shield = _shield.WasPressedThisFrame()
+      Shield = _shield.WasPressedThisFrame(),
+      Fire = _fire.WasPressedThisFrame()
     };
   }
 }
@@ -59,4 +62,5 @@ public struct FrameInput
   public bool Dash;
   public bool ShrinkGrow;
   public bool Shield;
+  public bool Fire;
 }

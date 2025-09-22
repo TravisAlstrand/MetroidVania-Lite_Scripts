@@ -26,6 +26,12 @@ public class MovingState : PlayerBaseState
       return;
     }
 
+    if (player.CanFire)
+    {
+      stateM.SwitchState(stateM._firingState);
+      return;
+    }
+
     if (player.IsGrounded)
     {
       if (player.CanJump)

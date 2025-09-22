@@ -41,6 +41,12 @@ public class WallJumpingState : PlayerBaseState
         return;
       }
 
+      if (player.CanFire)
+      {
+        stateM.SwitchState(stateM._firingState);
+        return;
+      }
+
       if (player.IsGrounded)
       {
         if (player.FrameInput.Move.x != 0f)

@@ -24,6 +24,7 @@ public class PlayerStateMachine : MonoBehaviour
   // OTHER STATES
   public DashingState _dashingState = new();
   public ShieldedState _shieldedState = new();
+  public FiringState _firingState = new();
 
   // CURRENT STATE
   public PlayerBaseState CurrentState { get; private set; }

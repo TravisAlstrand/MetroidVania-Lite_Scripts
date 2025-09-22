@@ -53,6 +53,12 @@ public class JumpingState : PlayerBaseState
       return;
     }
 
+    if (player.CanFire)
+    {
+      stateM.SwitchState(stateM._firingState);
+      return;
+    }
+
     // WALL SLIDE
     if (player.IsOnWall && player.WallAbilitiesUnlocked)
     {

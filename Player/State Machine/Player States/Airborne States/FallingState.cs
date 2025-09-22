@@ -22,6 +22,12 @@ public class FallingState : PlayerBaseState
       return;
     }
 
+    if (player.CanFire)
+    {
+      stateM.SwitchState(stateM._firingState);
+      return;
+    }
+
     if (player.CanJump || player.CanWallJump)
     {
       stateM.SwitchState(stateM._jumpingState);

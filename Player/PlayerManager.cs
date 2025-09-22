@@ -37,7 +37,6 @@ public class PlayerManager : MonoBehaviour
   [SerializeField] private float _coyoteTime = 0.13f;
   [SerializeField] private float _jumpBufferTime = 0.2f;
   [SerializeField] private float _jumpGroundIgnoreTime = 0.1f;
-  public float IgnoreWallOnJumpTime = 0.2f;
   private float _jumpBufferTimer;
   private float _coyoteTimer;
   [HideInInspector] public float _lastJumpTime;
@@ -84,18 +83,27 @@ public class PlayerManager : MonoBehaviour
   private float _shieldCoolDownTimer;
   private bool _shouldCountdownShieldCoolDown = false;
 
+  [Header("Fire")]
+  [SerializeField] private GameObject _fireProjectile;
+  [SerializeField] private Transform _projectileSpawnPoint;
+  [SerializeField] private float _projectileCoolDown = 1.5f;
+  private float _projectileCoolDownTimer;
+  private bool _shouldCountdownProjectileCoolDown = false;
+
   [Header("Ability Unlocks")]
   [SerializeField] private bool _wallAbilitiesUnlocked = false;
   [SerializeField] private bool _doubleJumpUnlocked = false;
   [SerializeField] private bool _dashUnlocked = false;
   [SerializeField] private bool _shrinkUnlocked = false;
   [SerializeField] private bool _shieldUnlocked = false;
+  [SerializeField] private bool _fireUnlocked = false;
 
   [Header("Ability Colors")]
   [SerializeField] private SpriteRenderer _fillSpriteRenderer;
   public Color WallColor;
   public Color DashColor;
   public Color ShrinkColor;
+  public Color FireColor;
   [HideInInspector] public Color WhiteColor = Color.white;
   private Color _previousColor;
 
@@ -132,10 +140,22 @@ public class PlayerManager : MonoBehaviour
   public bool CanShrink => DetermineIfCanShrink();
   public bool CanGrow => DetermineIfCanGrow();
   public bool CanShield => DetermineIfCanShield();
+  public bool CanFire => DetermineIfCanFire();
   #endregion
+
+  public static PlayerManager Instance;
 
   private void Awake()
   {
+    if (Instance == null)
+    {
+      Instance = this;
+    }
+    else
+    {
+      Destroy(gameObject);
+    }
+
     Rigidbody = GetComponent<Rigidbody2D>();
     Animator = GetComponent<Animator>();
     _playerInput = GetComponent<PlayerInputManager>();
@@ -202,6 +222,11 @@ public class PlayerManager : MonoBehaviour
     if (_shouldCountdownShieldCoolDown)
     {
       _shieldCoolDownTimer -= Time.deltaTime;
+    }
+
+    if (_shouldCountdownProjectileCoolDown)
+    {
+      _projectileCoolDownTimer -= Time.deltaTime;
     }
   }
 
@@ -299,7 +324,7 @@ public class PlayerManager : MonoBehaviour
   {
     if (!FrameInput.Dash) return false;
 
-    if (_dashUnlocked && _dashCoolDownTimer <= 0f && !_isOnWall)
+    if (_dashUnlocked && _dashCoolDownTimer <= 0f)
     {
       _shouldCountdownDashCoolDown = false;
       return true;
@@ -319,7 +344,7 @@ public class PlayerManager : MonoBehaviour
   {
     if (!FrameInput.ShrinkGrow || IsSmall) return false;
 
-    if (_shrinkUnlocked && _isGrounded)
+    if (_shrinkUnlocked)
     {
       return true;
     }
@@ -361,6 +386,31 @@ public class PlayerManager : MonoBehaviour
       return true;
     }
     return false;
+  }
+  #endregion
+
+  #region Fire
+  private bool DetermineIfCanFire()
+  {
+    if (!FrameInput.Fire) return false;
+
+    if (_fireUnlocked && _projectileCoolDownTimer <= 0f)
+    {
+      _shouldCountdownProjectileCoolDown = false;
+      return true;
+    }
+    return false;
+  }
+
+  public void StartProjectileCountDown()
+  {
+    _projectileCoolDownTimer = _projectileCoolDown;
+    _shouldCountdownProjectileCoolDown = true;
+  }
+
+  public void FireProjectile()
+  {
+    Instantiate(_fireProjectile, _projectileSpawnPoint.position, Quaternion.identity);
   }
   #endregion
 
