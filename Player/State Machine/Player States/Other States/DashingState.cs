@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class DashingState : PlayerBaseState
 {
-  // TODO: ADD ANIMATION NAME VARIABLE
+  private readonly string _animationName = "Dashing";
   private float _dashDurationTimer;
   private float _dashDirection;
 
   public override void EnterState(PlayerStateMachine stateM, PlayerManager player)
   {
-    // TODO: PLAY ANIMATION
+    player.Animator.Play(_animationName);
     player.ChangeSpriteColor(player.DashColor);
     _dashDurationTimer = player.DashDuration;
 
