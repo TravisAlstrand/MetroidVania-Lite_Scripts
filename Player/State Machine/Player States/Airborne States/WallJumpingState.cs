@@ -30,6 +30,12 @@ public class WallJumpingState : PlayerBaseState
 
     if (_wallJumpTimer <= 0f)
     {
+      if (player.CanAttack)
+      {
+        stateM.SwitchState(stateM._attackingState);
+        return;
+      }
+
       if (player.CanDash)
       {
         stateM.SwitchState(stateM._dashingState);

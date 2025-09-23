@@ -32,6 +32,12 @@ public class PlayerManager : MonoBehaviour
   public float MoveSpeed = 6f;
   private bool _isFacingRight;
 
+  [Header("Attacking")]
+  [SerializeField] private int _damage = 5;
+  [SerializeField] private float _attackCoolDown = .5f;
+  private float _attackCoolDownTimer;
+  private bool _shouldCountdownAttackCoolDown = false;
+
   [Header("Jumping")]
   public float JumpForce = 11.25f;
   [SerializeField] private float _coyoteTime = 0.13f;
@@ -91,6 +97,7 @@ public class PlayerManager : MonoBehaviour
   private bool _shouldCountdownProjectileCoolDown = false;
 
   [Header("Ability Unlocks")]
+  [SerializeField] private bool _attackUnlocked = false;
   [SerializeField] private bool _wallAbilitiesUnlocked = false;
   [SerializeField] private bool _doubleJumpUnlocked = false;
   [SerializeField] private bool _dashUnlocked = false;
@@ -135,6 +142,7 @@ public class PlayerManager : MonoBehaviour
   public bool IsOnWall => _isOnWall;
   public bool WallAbilitiesUnlocked => _wallAbilitiesUnlocked;
   public bool CanJump => DetermineIfCanJump();
+  public bool CanAttack => DetermineIfCanAttack();
   public bool CanWallJump => DetermineIfCanWallJump();
   public bool CanDash => DetermineIfCanDash();
   public bool CanShrink => DetermineIfCanShrink();
@@ -214,6 +222,11 @@ public class PlayerManager : MonoBehaviour
       _wallCoyoteTimer = _wallCoyoteTime;
     }
 
+    if (_shouldCountdownAttackCoolDown)
+    {
+      _attackCoolDownTimer -= Time.deltaTime;
+    }
+
     if (_shouldCountdownDashCoolDown)
     {
       _dashCoolDownTimer -= Time.deltaTime;
@@ -289,6 +302,26 @@ public class PlayerManager : MonoBehaviour
       return true;
     }
 
+    return false;
+  }
+  #endregion
+
+  #region Attacking
+  public void StartAttackCoolDown()
+  {
+    _attackCoolDownTimer = _attackCoolDown;
+    _shouldCountdownAttackCoolDown = true;
+  }
+
+  private bool DetermineIfCanAttack()
+  {
+    if (!FrameInput.Attack) return false;
+
+    if (_attackUnlocked && _attackCoolDownTimer <= 0f)
+    {
+      _shouldCountdownAttackCoolDown = false;
+      return true;
+    }
     return false;
   }
   #endregion

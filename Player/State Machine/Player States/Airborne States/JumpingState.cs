@@ -34,6 +34,12 @@ public class JumpingState : PlayerBaseState
       return;
     }
 
+    if (player.CanAttack)
+    {
+      stateM.SwitchState(stateM._attackingState);
+      return;
+    }
+
     // LANDING CHECK
     if (player.IsGrounded)
     {

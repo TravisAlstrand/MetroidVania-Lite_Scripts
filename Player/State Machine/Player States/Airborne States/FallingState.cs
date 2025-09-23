@@ -11,6 +11,12 @@ public class FallingState : PlayerBaseState
 
   public override void UpdateState(PlayerStateMachine stateM, PlayerManager player)
   {
+    if (player.CanAttack)
+    {
+      stateM.SwitchState(stateM._attackingState);
+      return;
+    }
+
     if (player.CanDash)
     {
       stateM.SwitchState(stateM._dashingState);

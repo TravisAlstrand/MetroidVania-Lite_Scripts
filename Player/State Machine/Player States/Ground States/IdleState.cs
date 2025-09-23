@@ -16,6 +16,12 @@ public class IdleState : PlayerBaseState
       return;
     }
 
+    if (player.CanAttack)
+    {
+      stateM.SwitchState(stateM._attackingState);
+      return;
+    }
+
     if (player.CanDash)
     {
       stateM.SwitchState(stateM._dashingState);
