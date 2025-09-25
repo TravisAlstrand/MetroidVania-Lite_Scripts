@@ -9,6 +9,7 @@ public class AttackingState : PlayerBaseState
   public override void EnterState(PlayerStateMachine stateM, PlayerManager player)
   {
     player.Animator.Play(_animationName);
+    player.ToggleHitBox();
 
     AnimationClip clip = player.GetClipByName(_animationName);
     _animationLength = clip.length;
@@ -53,5 +54,10 @@ public class AttackingState : PlayerBaseState
         }
       }
     }
+  }
+
+  public override void ExitState(PlayerStateMachine stateM, PlayerManager player)
+  {
+    player.ToggleHitBox();
   }
 }

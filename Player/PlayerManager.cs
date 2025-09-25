@@ -33,6 +33,7 @@ public class PlayerManager : MonoBehaviour
   private bool _isFacingRight;
 
   [Header("Attacking")]
+  [SerializeField] private BoxCollider2D _hitBox;
   [SerializeField] private int _damage = 5;
   [SerializeField] private float _attackCoolDown = .5f;
   private float _attackCoolDownTimer;
@@ -176,6 +177,7 @@ public class PlayerManager : MonoBehaviour
   {
     _isFacingRight = transform.rotation.y == 0f;
     _normalGravity = Rigidbody.gravityScale;
+    _hitBox.enabled = false;
   }
 
   private void Update()
@@ -323,6 +325,11 @@ public class PlayerManager : MonoBehaviour
       return true;
     }
     return false;
+  }
+
+  public void ToggleHitBox()
+  {
+    _hitBox.enabled = !_hitBox.enabled;
   }
   #endregion
 
