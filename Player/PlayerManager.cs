@@ -534,6 +534,14 @@ public class PlayerManager : MonoBehaviour
     CheckIfOnWall();
     if (IsSmall) CheckIfUnderLowCeiling();
   }
+
+  private void OnTriggerEnter2D(Collider2D other)
+  {
+    if (other.TryGetComponent<IDamageable>(out var damageable))
+    {
+      damageable.TakeDamage(_damage);
+    }
+  }
   #endregion
 }
 
