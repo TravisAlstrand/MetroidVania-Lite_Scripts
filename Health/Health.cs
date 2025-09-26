@@ -5,6 +5,8 @@ public class Health : MonoBehaviour, IDamageable
   [SerializeField] private int _maxHealth = 10;
   private int _currentHealth;
 
+  public System.Action OnDeath;
+
   private void Start()
   {
     _currentHealth = _maxHealth;
@@ -21,6 +23,6 @@ public class Health : MonoBehaviour, IDamageable
 
   private void Die()
   {
-    Destroy(gameObject);
+    OnDeath?.Invoke();
   }
 }

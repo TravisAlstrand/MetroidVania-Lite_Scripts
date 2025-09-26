@@ -35,6 +35,8 @@ public class PlayerManager : MonoBehaviour
   [Header("Attacking")]
   [SerializeField] private BoxCollider2D _hitBox;
   [SerializeField] private int _damage = 5;
+  [SerializeField] private float _knockBackForce = 5f;
+  [SerializeField] private float _knockBackStunTime = .5f;
   [SerializeField] private float _attackCoolDown = .5f;
   private float _attackCoolDownTimer;
   private bool _shouldCountdownAttackCoolDown = false;
@@ -540,6 +542,12 @@ public class PlayerManager : MonoBehaviour
     if (other.TryGetComponent<IDamageable>(out var damageable))
     {
       damageable.TakeDamage(_damage);
+    }
+
+    if (other.TryGetComponent<IKnockBackable>(out var knockbackable))
+    {
+      Vector2 direction = (other.transform.position - transform.position).normalized;
+      knockbackable.ApplyKnockBack(direction, _knockBackForce, 0.2f);
     }
   }
   #endregion
