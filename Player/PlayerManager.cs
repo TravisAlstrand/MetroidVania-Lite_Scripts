@@ -108,6 +108,7 @@ public class PlayerManager : MonoBehaviour
   [SerializeField] private float _swimUpwardForce = 5f;
   public float SwimMoveForce = 3f;
   public float WaterGravity = .5f;
+  public float ExitWaterJumpForce = 6f;
   private RaycastHit2D _waterTopHitInfo;
   private RaycastHit2D _waterBottomHitInfo;
   private bool _isUnderWater = false;
@@ -143,6 +144,7 @@ public class PlayerManager : MonoBehaviour
   #endregion
 
   #region Getters
+  public float NormalGravity => _normalGravity;
   public bool IsFacingRight => _isFacingRight;
   public bool IsGrounded
   {

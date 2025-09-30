@@ -16,7 +16,7 @@ public class SwimmingState : PlayerBaseState
   {
     if (!player.IsUnderWater && player.Rigidbody.linearVelocityY > 0f)
     {
-      stateM.SwitchState(stateM._jumpingState);
+      stateM.SwitchState(stateM._exitWaterJumpState);
       return;
     }
 
