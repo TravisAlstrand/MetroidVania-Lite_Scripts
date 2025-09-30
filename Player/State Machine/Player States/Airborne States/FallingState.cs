@@ -1,3 +1,4 @@
+using UnityEditorInternal;
 using UnityEngine;
 
 public class FallingState : PlayerBaseState
@@ -44,6 +45,11 @@ public class FallingState : PlayerBaseState
     {
       stateM.SwitchState(stateM._wallSlidingState);
       return;
+    }
+
+    if (player.IsUnderWater && player.SwimAbilityUnlocked)
+    {
+      stateM.SwitchState(stateM._swimmingState);
     }
 
     if (player.IsGrounded)

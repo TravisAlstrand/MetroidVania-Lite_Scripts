@@ -27,6 +27,7 @@ public class PlayerStateMachine : MonoBehaviour
   public ShieldedState _shieldedState = new();
   public FiringState _firingState = new();
   public AttackingState _attackingState = new();
+  public SwimmingState _swimmingState = new();
 
   // CURRENT STATE
   public PlayerBaseState CurrentState { get; private set; }

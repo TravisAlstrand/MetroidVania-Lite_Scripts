@@ -99,6 +99,19 @@ public class PlayerManager : MonoBehaviour
   private float _projectileCoolDownTimer;
   private bool _shouldCountdownProjectileCoolDown = false;
 
+  [Header("Swimming")]
+  [SerializeField] private LayerMask _waterLayer;
+  [SerializeField] private Transform _topWaterRayPoint;
+  [SerializeField] private Transform _bottomWaterRayPoint;
+  [SerializeField] private float _waterDetectionRayLength = 0.2f;
+  [SerializeField] private bool _showWaterHitRays = false;
+  [SerializeField] private float _swimUpwardForce = 5f;
+  public float SwimMoveForce = 3f;
+  public float WaterGravity = .5f;
+  private RaycastHit2D _waterTopHitInfo;
+  private RaycastHit2D _waterBottomHitInfo;
+  private bool _isUnderWater = false;
+
   [Header("Ability Unlocks")]
   [SerializeField] private bool _attackUnlocked = false;
   [SerializeField] private bool _wallAbilitiesUnlocked = false;
@@ -107,6 +120,7 @@ public class PlayerManager : MonoBehaviour
   [SerializeField] private bool _shrinkUnlocked = false;
   [SerializeField] private bool _shieldUnlocked = false;
   [SerializeField] private bool _fireUnlocked = false;
+  [SerializeField] private bool _swimUnlocked = false;
 
   [Header("Ability Colors")]
   [SerializeField] private SpriteRenderer _fillSpriteRenderer;
@@ -114,6 +128,7 @@ public class PlayerManager : MonoBehaviour
   public Color DashColor;
   public Color ShrinkColor;
   public Color FireColor;
+  public Color WaterColor;
   [HideInInspector] public Color WhiteColor = Color.white;
   private Color _previousColor;
 
@@ -143,6 +158,8 @@ public class PlayerManager : MonoBehaviour
     }
   }
   public bool IsOnWall => _isOnWall;
+  public bool IsUnderWater => _isUnderWater;
+  public bool SwimAbilityUnlocked => _swimUnlocked;
   public bool WallAbilitiesUnlocked => _wallAbilitiesUnlocked;
   public bool CanJump => DetermineIfCanJump();
   public bool CanAttack => DetermineIfCanAttack();
@@ -187,6 +204,7 @@ public class PlayerManager : MonoBehaviour
     GatherInput();
     CountTimers();
     HandleJumpInput();
+    if (_swimUnlocked) { Swim(); }
     FlipSprite();
   }
 
@@ -456,6 +474,17 @@ public class PlayerManager : MonoBehaviour
   }
   #endregion
 
+  #region Water
+  private void Swim()
+  {
+    if (_isUnderWater && FrameInput.Jump)
+    {
+      Rigidbody.linearVelocityY = 0f;
+      Rigidbody.AddForceY(_swimUpwardForce, ForceMode2D.Impulse);
+    }
+  }
+  #endregion
+
   #region Helpers
   public AnimationClip GetClipByName(string name)
   {
@@ -530,25 +559,41 @@ public class PlayerManager : MonoBehaviour
     else { _isUnderLowCeiling = false; }
   }
 
+  private void CheckIfUnderWater()
+  {
+    _waterTopHitInfo = Physics2D.Raycast(_topWaterRayPoint.position, Vector2.up, _waterDetectionRayLength, _waterLayer);
+    _waterBottomHitInfo = Physics2D.Raycast(_bottomWaterRayPoint.position, Vector2.down, _waterDetectionRayLength, _waterLayer);
+
+    if (_showWaterHitRays)
+    {
+      Debug.DrawRay(_topWaterRayPoint.position, new Vector3(0f, _waterDetectionRayLength, 0f), Color.crimson);
+      Debug.DrawRay(_bottomWaterRayPoint.position, new Vector3(0f, -_waterDetectionRayLength, 0f), Color.crimson);
+    }
+
+    // DETERMINE IF THIS IS DESIRED - BEING COMPLETELY OUT OF WATER BEFORE TRANSITION OUT
+    // WITHOUT THIS YOU JUMP OUT AS SOON AS YOUR HEAD TOUCHES TOP OF WATER
+    if (_isUnderWater)
+    {
+      if (!_waterTopHitInfo && !_waterBottomHitInfo)
+      {
+        _isUnderWater = false;
+      }
+    }
+    else
+    {
+      if (_waterTopHitInfo && _waterBottomHitInfo)
+      {
+        _isUnderWater = true;
+      }
+    }
+  }
+
   private void CollisionChecks()
   {
     CheckIfGrounded();
     CheckIfOnWall();
+    CheckIfUnderWater();
     if (IsSmall) CheckIfUnderLowCeiling();
-  }
-
-  private void OnTriggerEnter2D(Collider2D other)
-  {
-    if (other.TryGetComponent<IDamageable>(out var damageable))
-    {
-      damageable.TakeDamage(_damage);
-    }
-
-    if (other.TryGetComponent<IKnockBackable>(out var knockbackable))
-    {
-      Vector2 direction = (other.transform.position - transform.position).normalized;
-      knockbackable.ApplyKnockBack(direction, _knockBackForce, 0.2f);
-    }
   }
   #endregion
 }

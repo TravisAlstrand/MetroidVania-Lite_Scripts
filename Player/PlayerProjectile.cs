@@ -5,6 +5,8 @@ public class PlayerProjectile : MonoBehaviour
 {
   [SerializeField] private float _projectileForce;
   [SerializeField] private int _damage = 10;
+  [SerializeField] private float _knockBackForce = 10f;
+  [SerializeField] private float _knockBackStunTime = .8f;
   [SerializeField] private GameObject _impactParticles;
   [SerializeField] private float _maxLifeTime = 3f;
   private float _projectileDirection;
@@ -43,6 +45,12 @@ public class PlayerProjectile : MonoBehaviour
     if (other.gameObject.TryGetComponent<IDamageable>(out var damageable))
     {
       damageable.TakeDamage(_damage);
+    }
+
+    if (other.gameObject.TryGetComponent<IKnockBackable>(out var knockbackable))
+    {
+      Vector2 direction = (other.transform.position - transform.position).normalized;
+      knockbackable.ApplyKnockBack(direction, _knockBackForce, _knockBackStunTime);
     }
     Destroy(gameObject);
   }
