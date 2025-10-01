@@ -29,4 +29,14 @@ public class SmallIdleState : PlayerBaseState
       stateM.SwitchState(stateM._smallFallingState);
     }
   }
+
+  public override void FixedUpdateState(PlayerStateMachine stateM, PlayerManager player)
+  {
+    if (player.IsOnWaterCannotSwim)
+    {
+      player.Rigidbody.linearVelocityY = 0f;
+      player.Rigidbody.AddForceY(player.WaterBumpCannotSwim);
+      player.IsOnWaterCannotSwim = false;
+    }
+  }
 }

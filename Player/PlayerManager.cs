@@ -109,9 +109,11 @@ public class PlayerManager : MonoBehaviour
   public float SwimMoveForce = 3f;
   public float WaterGravity = .5f;
   public float ExitWaterJumpForce = 6f;
+  public float WaterBumpCannotSwim = 2f;
   private RaycastHit2D _waterTopHitInfo;
   private RaycastHit2D _waterBottomHitInfo;
   private bool _isUnderWater = false;
+  [HideInInspector] public bool IsOnWaterCannotSwim = false;
 
   [Header("Ability Unlocks")]
   [SerializeField] private bool _attackUnlocked = false;
@@ -572,7 +574,7 @@ public class PlayerManager : MonoBehaviour
       Debug.DrawRay(_bottomWaterRayPoint.position, new Vector3(0f, -_waterDetectionRayLength, 0f), Color.crimson);
     }
 
-    // DETERMINE IF THIS IS DESIRED - BEING COMPLETELY OUT OF WATER BEFORE TRANSITION OUT
+    // BEING COMPLETELY OUT OF WATER BEFORE TRANSITION OUT
     // WITHOUT THIS YOU JUMP OUT AS SOON AS YOUR HEAD TOUCHES TOP OF WATER
     if (_isUnderWater)
     {
@@ -590,11 +592,32 @@ public class PlayerManager : MonoBehaviour
     }
   }
 
+  private void CheckIfTouchingWaterCannotSwim()
+  {
+    _waterBottomHitInfo = Physics2D.Raycast(_bottomWaterRayPoint.position, Vector2.down, _waterDetectionRayLength, _waterLayer);
+
+    if (_showWaterHitRays)
+    {
+      Debug.DrawRay(_bottomWaterRayPoint.position, new Vector3(0f, -_waterDetectionRayLength, 0f), Color.crimson);
+    }
+
+    if (_waterBottomHitInfo)
+    {
+      IsOnWaterCannotSwim = true;
+    }
+    // else { IsOnWaterCannotSwim = false; }
+  }
+
   private void CollisionChecks()
   {
     CheckIfGrounded();
     CheckIfOnWall();
-    CheckIfUnderWater();
+    if (SwimAbilityUnlocked)
+    {
+      CheckIfUnderWater();
+    }
+    else { CheckIfTouchingWaterCannotSwim(); }
+
     if (IsSmall) CheckIfUnderLowCeiling();
   }
   #endregion

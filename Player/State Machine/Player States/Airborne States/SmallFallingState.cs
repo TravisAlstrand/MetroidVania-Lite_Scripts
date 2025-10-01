@@ -32,5 +32,12 @@ public class SmallFallingState : PlayerBaseState
 
     // HORIZONTAL MOVEMENT
     player.Rigidbody.linearVelocityX = player.FrameInput.Move.x * player.MoveSpeed;
+
+    if (player.IsOnWaterCannotSwim)
+    {
+      player.Rigidbody.linearVelocityY = 0f;
+      player.Rigidbody.AddForceY(player.WaterBumpCannotSwim);
+      player.IsOnWaterCannotSwim = false;
+    }
   }
 }

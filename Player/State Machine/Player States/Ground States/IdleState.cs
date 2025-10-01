@@ -59,4 +59,13 @@ public class IdleState : PlayerBaseState
       stateM.SwitchState(stateM._fallingState);
     }
   }
+
+  public override void FixedUpdateState(PlayerStateMachine stateM, PlayerManager player)
+  {
+    if (player.IsOnWaterCannotSwim)
+    {
+      player.Rigidbody.AddForceY(player.WaterBumpCannotSwim);
+      player.IsOnWaterCannotSwim = false;
+    }
+  }
 }

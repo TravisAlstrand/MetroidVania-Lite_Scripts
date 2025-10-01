@@ -31,5 +31,12 @@ public class SmallMovingState : PlayerBaseState
   public override void FixedUpdateState(PlayerStateMachine stateM, PlayerManager player)
   {
     player.Rigidbody.linearVelocityX = player.FrameInput.Move.x * player.SmallMoveSpeed;
+
+    if (player.IsOnWaterCannotSwim)
+    {
+      player.Rigidbody.linearVelocityY = 0f;
+      player.Rigidbody.AddForceY(player.WaterBumpCannotSwim);
+      player.IsOnWaterCannotSwim = false;
+    }
   }
 }

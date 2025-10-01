@@ -62,6 +62,13 @@ public class DashingState : PlayerBaseState
         0f
       );
     }
+
+    if (player.IsOnWaterCannotSwim)
+    {
+      player.Rigidbody.linearVelocityY = 0f;
+      player.Rigidbody.AddForceY(player.WaterBumpCannotSwim);
+      player.IsOnWaterCannotSwim = false;
+    }
   }
 
   public override void ExitState(PlayerStateMachine stateM, PlayerManager player)
