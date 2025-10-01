@@ -38,6 +38,11 @@ public class MovingState : PlayerBaseState
       return;
     }
 
+    if (player.IsUnderWater)
+    {
+      stateM.SwitchState(stateM._swimmingState);
+    }
+
     if (player.IsGrounded)
     {
       if (player.CanJump)

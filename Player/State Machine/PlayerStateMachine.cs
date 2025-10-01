@@ -49,7 +49,7 @@ public class PlayerStateMachine : MonoBehaviour
   private void Update()
   {
     CurrentState?.UpdateState(this, _player);
-    // Debug.Log(CurrentState);
+    Debug.Log(CurrentState);
   }
 
   private void FixedUpdate()

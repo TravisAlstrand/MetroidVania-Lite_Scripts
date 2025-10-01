@@ -30,6 +30,17 @@ public class ShieldedState : PlayerBaseState
     }
   }
 
+  public override void FixedUpdateState(PlayerStateMachine stateM, PlayerManager player)
+  {
+    if (player.IsOnWaterCannotSwim)
+    {
+      player.Rigidbody.linearVelocityY = 0f;
+      player.Rigidbody.AddForceY(player.WaterBumpCannotSwim);
+      player.IsOnWaterCannotSwim = false;
+      stateM.SwitchState(stateM._fallingState);
+    }
+  }
+
   public override void ExitState(PlayerStateMachine stateM, PlayerManager player)
   {
     player.StartShieldCoolDown();

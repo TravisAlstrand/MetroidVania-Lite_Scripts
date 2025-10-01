@@ -76,9 +76,6 @@ public class FallingState : PlayerBaseState
 
   public override void FixedUpdateState(PlayerStateMachine stateM, PlayerManager player)
   {
-    // ADD EXTRA GRAVITY
-    player.Rigidbody.linearVelocityY -= player.ExtraGravity * Time.fixedDeltaTime;
-
     // CLAMP FALL SPEED
     player.Rigidbody.linearVelocityY = Mathf.Max(player.Rigidbody.linearVelocityY, -player.MaxFallSpeed);
 
@@ -90,6 +87,11 @@ public class FallingState : PlayerBaseState
       player.Rigidbody.linearVelocityY = 0f;
       player.Rigidbody.AddForceY(player.WaterBumpCannotSwim);
       player.IsOnWaterCannotSwim = false;
+    }
+    else
+    {
+      // ADD EXTRA GRAVITY
+      player.Rigidbody.linearVelocityY -= player.ExtraGravity * Time.fixedDeltaTime;
     }
   }
 }

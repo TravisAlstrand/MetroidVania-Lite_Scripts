@@ -104,12 +104,12 @@ public class PlayerManager : MonoBehaviour
   [SerializeField] private Transform _topWaterRayPoint;
   [SerializeField] private Transform _bottomWaterRayPoint;
   [SerializeField] private float _waterDetectionRayLength = 0.2f;
-  [SerializeField] private bool _showWaterHitRays = false;
   [SerializeField] private float _swimUpwardForce = 5f;
   public float SwimMoveForce = 3f;
   public float WaterGravity = .5f;
   public float ExitWaterJumpForce = 6f;
   public float WaterBumpCannotSwim = 2f;
+  [SerializeField] private bool _showWaterHitRays = false;
   private RaycastHit2D _waterTopHitInfo;
   private RaycastHit2D _waterBottomHitInfo;
   private bool _isUnderWater = false;
@@ -574,50 +574,40 @@ public class PlayerManager : MonoBehaviour
       Debug.DrawRay(_bottomWaterRayPoint.position, new Vector3(0f, -_waterDetectionRayLength, 0f), Color.crimson);
     }
 
-    // BEING COMPLETELY OUT OF WATER BEFORE TRANSITION OUT
-    // WITHOUT THIS YOU JUMP OUT AS SOON AS YOUR HEAD TOUCHES TOP OF WATER
-    if (_isUnderWater)
+    if (_swimUnlocked)
     {
-      if (!_waterTopHitInfo && !_waterBottomHitInfo)
+      // BEING COMPLETELY OUT OF WATER BEFORE TRANSITION OUT
+      // WITHOUT THIS YOU JUMP OUT AS SOON AS YOUR HEAD TOUCHES TOP OF WATER
+      if (_isUnderWater)
       {
-        _isUnderWater = false;
+        if (!_waterTopHitInfo && !_waterBottomHitInfo)
+        {
+          _isUnderWater = false;
+        }
+      }
+      else
+      {
+        if (_waterTopHitInfo)
+        {
+          _isUnderWater = true;
+        }
       }
     }
     else
     {
-      if (_waterTopHitInfo && _waterBottomHitInfo)
+      if (_waterBottomHitInfo)
       {
-        _isUnderWater = true;
+        IsOnWaterCannotSwim = true;
       }
     }
-  }
 
-  private void CheckIfTouchingWaterCannotSwim()
-  {
-    _waterBottomHitInfo = Physics2D.Raycast(_bottomWaterRayPoint.position, Vector2.down, _waterDetectionRayLength, _waterLayer);
-
-    if (_showWaterHitRays)
-    {
-      Debug.DrawRay(_bottomWaterRayPoint.position, new Vector3(0f, -_waterDetectionRayLength, 0f), Color.crimson);
-    }
-
-    if (_waterBottomHitInfo)
-    {
-      IsOnWaterCannotSwim = true;
-    }
-    // else { IsOnWaterCannotSwim = false; }
   }
 
   private void CollisionChecks()
   {
     CheckIfGrounded();
     CheckIfOnWall();
-    if (SwimAbilityUnlocked)
-    {
-      CheckIfUnderWater();
-    }
-    else { CheckIfTouchingWaterCannotSwim(); }
-
+    CheckIfUnderWater();
     if (IsSmall) CheckIfUnderLowCeiling();
   }
   #endregion

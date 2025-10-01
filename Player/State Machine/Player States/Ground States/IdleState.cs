@@ -46,6 +46,12 @@ public class IdleState : PlayerBaseState
       return;
     }
 
+    if (player.IsUnderWater)
+    {
+      stateM.SwitchState(stateM._swimmingState);
+      return;
+    }
+
     if (player.IsGrounded)
     {
       if (player.FrameInput.Move.x != 0f)
