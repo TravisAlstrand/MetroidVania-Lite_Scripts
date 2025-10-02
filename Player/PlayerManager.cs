@@ -34,9 +34,9 @@ public class PlayerManager : MonoBehaviour
 
   [Header("Attacking")]
   [SerializeField] private BoxCollider2D _hitBox;
-  [SerializeField] private int _damage = 5;
-  [SerializeField] private float _knockBackForce = 5f;
-  [SerializeField] private float _knockBackStunTime = .5f;
+  // [SerializeField] private int _damage = 5;
+  // [SerializeField] private float _knockBackForce = 5f;
+  // [SerializeField] private float _knockBackStunTime = .5f;
   [SerializeField] private float _attackCoolDown = .5f;
   private float _attackCoolDownTimer;
   private bool _shouldCountdownAttackCoolDown = false;
@@ -182,10 +182,6 @@ public class PlayerManager : MonoBehaviour
     if (Instance == null)
     {
       Instance = this;
-    }
-    else
-    {
-      Destroy(gameObject);
     }
 
     Rigidbody = GetComponent<Rigidbody2D>();
