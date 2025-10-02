@@ -1,14 +1,14 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
+[RequireComponent(typeof(CanvasGroup))]
 public class SceneFadeManager : MonoBehaviour
 {
-  [SerializeField] private Image _fadeImage;
-  [SerializeField] private float _fadeSpeed = 5f;
-  [SerializeField] private Color _fadeStartColor;
+  [SerializeField] private float _fadeDuration = 1f;
+  private CanvasGroup _canvasGroup;
 
-  public bool IsFadingOut { get; private set; }
-  public bool IsFadingIn { get; private set; }
+  public bool IsFadingOutOfScene { get; private set; }
+  public bool IsFadingIntoScene { get; private set; }
 
   public static SceneFadeManager Instance;
 
@@ -18,46 +18,48 @@ public class SceneFadeManager : MonoBehaviour
     {
       Instance = this;
     }
-
-    _fadeStartColor.a = 0f;
+    _canvasGroup = GetComponent<CanvasGroup>();
   }
 
-  private void Update()
+  public void StartFadeOutOfScene()
   {
-    if (IsFadingOut)
-    {
-      if (_fadeStartColor.a < 1f)
-      {
-        _fadeStartColor.a += Time.deltaTime * _fadeSpeed;
-        _fadeImage.color = _fadeStartColor;
-      }
-      else { IsFadingOut = false; }
-    }
-
-    if (IsFadingIn)
-    {
-      if (_fadeStartColor.a > 0f)
-      {
-        _fadeStartColor.a -= Time.deltaTime * _fadeSpeed;
-        _fadeImage.color = _fadeStartColor;
-      }
-      else { IsFadingIn = false; }
-    }
+    IsFadingOutOfScene = true;
+    StartCoroutine(FadeToBlack());
   }
 
-  public void StartFadeOut()
+  public void StartFadeIntoScene()
   {
-    _fadeImage.color = _fadeStartColor;
-    IsFadingOut = true;
+    StartCoroutine(FadeToTransparent());
   }
 
-  public void StartFadeIn()
+  private IEnumerator FadeToTransparent()
   {
-    Debug.Log("Fade in called");
-    if (_fadeImage.color.a >= 1f)
+    float timer = 0f;
+    float startAlpha = _canvasGroup.alpha;
+    float endAlpha = 0f;
+
+    while (timer < _fadeDuration)
     {
-      _fadeImage.color = _fadeStartColor;
-      IsFadingIn = true;
+      timer += Time.deltaTime;
+      _canvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, timer / _fadeDuration);
+      yield return null;
     }
+    _canvasGroup.alpha = 0f;
+  }
+
+  private IEnumerator FadeToBlack()
+  {
+    float timer = 0f;
+    float startAlpha = _canvasGroup.alpha;
+    float endAlpha = 1f;
+
+    while (timer < _fadeDuration)
+    {
+      timer += Time.deltaTime;
+      _canvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, timer / _fadeDuration);
+      yield return null;
+    }
+    _canvasGroup.alpha = 1f;
+    IsFadingOutOfScene = false;
   }
 }

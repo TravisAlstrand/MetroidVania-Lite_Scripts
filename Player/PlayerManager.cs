@@ -173,6 +173,14 @@ public class PlayerManager : MonoBehaviour
   public bool CanGrow => DetermineIfCanGrow();
   public bool CanShield => DetermineIfCanShield();
   public bool CanFire => DetermineIfCanFire();
+  public Collider2D GetActiveBodyCollider()
+  {
+    if (IsSmall)
+    {
+      return _smallBodyCollider;
+    }
+    else { return _tallBodyCollider; }
+  }
   #endregion
 
   public static PlayerManager Instance;

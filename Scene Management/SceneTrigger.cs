@@ -4,7 +4,6 @@ public class SceneTrigger : MonoBehaviour
 {
   public enum DoorLabel
   {
-    None,
     A,
     B,
     C,
@@ -16,7 +15,8 @@ public class SceneTrigger : MonoBehaviour
   [SerializeField] private DoorLabel _doorLabelToSpawnTo;
 
   [Header("Current:")]
-  [SerializeField] private DoorLabel _thisDoorLabel;
+  public DoorLabel CurrentDoorLabel;
+  public Transform SpawnPoint;
 
   private void OnTriggerEnter2D(Collider2D other)
   {
