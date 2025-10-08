@@ -34,6 +34,7 @@ public class PlayerManager : MonoBehaviour
 
   [Header("Attacking")]
   [SerializeField] private BoxCollider2D _hitBox;
+  public float HorizontalAttackBump;
   // [SerializeField] private int _damage = 5;
   // [SerializeField] private float _knockBackForce = 5f;
   // [SerializeField] private float _knockBackStunTime = .5f;
@@ -138,11 +139,10 @@ public class PlayerManager : MonoBehaviour
   #region Components
   [HideInInspector] public Rigidbody2D Rigidbody;
   [HideInInspector] public Animator Animator;
-  private PlayerInputManager _playerInput;
+  public PlayerInputManager PlayerInput { get; private set; }
   [HideInInspector] public FrameInput FrameInput;
   private Collider2D _tallBodyCollider;
   private Collider2D _smallBodyCollider;
-  private PlayerStateMachine _stateM;
   #endregion
 
   #region Getters
@@ -194,10 +194,9 @@ public class PlayerManager : MonoBehaviour
 
     Rigidbody = GetComponent<Rigidbody2D>();
     Animator = GetComponent<Animator>();
-    _playerInput = GetComponent<PlayerInputManager>();
+    PlayerInput = GetComponent<PlayerInputManager>();
     _tallBodyCollider = GetComponent<CapsuleCollider2D>();
     _smallBodyCollider = GetComponent<CircleCollider2D>();
-    _stateM = GetComponent<PlayerStateMachine>();
   }
 
   private void Start()
@@ -223,7 +222,7 @@ public class PlayerManager : MonoBehaviour
 
   private void GatherInput()
   {
-    FrameInput = _playerInput.FrameInput;
+    FrameInput = PlayerInput.FrameInput;
   }
 
   private void CountTimers()

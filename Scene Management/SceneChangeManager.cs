@@ -37,6 +37,7 @@ public class SceneChangeManager : MonoBehaviour
 
   private IEnumerator FadeOutThenLoadScene(SceneField sceneToLoad, SceneTrigger.DoorLabel doorLabelToSpawnTo)
   {
+    PlayerManager.Instance.PlayerInput.DisablePlayerControls();
     SceneFadeManager.Instance.StartFadeOutOfScene();
 
     while (SceneFadeManager.Instance.IsFadingOutOfScene)

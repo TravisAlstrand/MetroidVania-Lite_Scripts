@@ -1,15 +1,22 @@
+using UnityEngine;
+
 public class IdleState : PlayerBaseState
 {
   private readonly string _animationName = "Idle";
+  private readonly float _timeUntilCanLookDown = .5f;
+  private float _lookDownTimer;
 
   public override void EnterState(PlayerStateMachine stateM, PlayerManager player)
   {
+    _lookDownTimer = _timeUntilCanLookDown;
     player.Animator.Play(_animationName);
     player.Rigidbody.linearVelocityX = 0f;
   }
 
   public override void UpdateState(PlayerStateMachine stateM, PlayerManager player)
   {
+    _lookDownTimer -= Time.deltaTime;
+
     if (player.CanJump)
     {
       stateM.SwitchState(stateM._jumpingState);
@@ -63,6 +70,19 @@ public class IdleState : PlayerBaseState
     else
     {
       stateM.SwitchState(stateM._fallingState);
+      return;
+    }
+
+    if (_lookDownTimer <= 0f)
+    {
+      if (player.FrameInput.Move.y < 0f && !stateM.CameraManager.LookDownCameraActive)
+      {
+        stateM.CameraManager.ActivateLookDownCamera();
+      }
+      else if (player.FrameInput.Move.y >= 0f && stateM.CameraManager.LookDownCameraActive)
+      {
+        stateM.CameraManager.DeactivateLookDownCamera();
+      }
     }
   }
 
@@ -72,6 +92,14 @@ public class IdleState : PlayerBaseState
     {
       player.Rigidbody.AddForceY(player.WaterBumpCannotSwim);
       player.IsOnWaterCannotSwim = false;
+    }
+  }
+
+  public override void ExitState(PlayerStateMachine stateM, PlayerManager player)
+  {
+    if (stateM.CameraManager.LookDownCameraActive)
+    {
+      stateM.CameraManager.DeactivateLookDownCamera();
     }
   }
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 public class AttackingState : PlayerBaseState
 {
   private readonly string _animationName = "Attack1";
+  private float _attackBumpDirection;
   private float _animationLength;
   private float _stateTimer;
 
@@ -10,6 +11,8 @@ public class AttackingState : PlayerBaseState
   {
     player.Animator.Play(_animationName);
     player.ToggleHitBox();
+    _attackBumpDirection = player.IsFacingRight ? 1f : -1f;
+    player.Rigidbody.AddForceX(_attackBumpDirection * player.HorizontalAttackBump, ForceMode2D.Impulse);
 
     AnimationClip clip = player.GetClipByName(_animationName);
     _animationLength = clip.length;
@@ -43,15 +46,7 @@ public class AttackingState : PlayerBaseState
           return;
         }
 
-        if (player.Rigidbody.linearVelocityY > 0f)
-        {
-          stateM.SwitchState(stateM._jumpingState);
-          return;
-        }
-        else
-        {
-          stateM.SwitchState(stateM._fallingState);
-        }
+        stateM.SwitchState(stateM._fallingState);
       }
     }
   }

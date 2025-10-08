@@ -35,6 +35,7 @@ public class PlayerStateMachine : MonoBehaviour
 
   // COMPONENTS
   private PlayerManager _player;
+  public CameraManager CameraManager;
 
   private void Awake()
   {
@@ -43,6 +44,7 @@ public class PlayerStateMachine : MonoBehaviour
 
   private void Start()
   {
+    CameraManager = FindFirstObjectByType<CameraManager>();
     SwitchState(_idleState);
   }
 

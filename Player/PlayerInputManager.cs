@@ -55,6 +55,16 @@ public class PlayerInputManager : MonoBehaviour
       Fire = _fire.WasPressedThisFrame()
     };
   }
+
+  public void DisablePlayerControls()
+  {
+    _playerInputActions.Disable();
+  }
+
+  public void EnablePlayerControls()
+  {
+    _playerInputActions.Enable();
+  }
 }
 
 public struct FrameInput

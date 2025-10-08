@@ -34,6 +34,7 @@ public class SceneFadeManager : MonoBehaviour
 
   private IEnumerator FadeToTransparent()
   {
+    PlayerManager.Instance.PlayerInput.EnablePlayerControls();
     float timer = 0f;
     float startAlpha = _canvasGroup.alpha;
     float endAlpha = 0f;
